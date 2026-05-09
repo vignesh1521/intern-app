@@ -39,6 +39,21 @@ export async function POST(req: Request) {
             );
         }
 
+        const emailRegex =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Invalid email format",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
+
         const [existingUsers]: any = await pool.query(
             "SELECT id FROM users WHERE email = ?",
             [email]

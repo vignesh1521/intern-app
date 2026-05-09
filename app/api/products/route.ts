@@ -12,7 +12,6 @@ export async function GET(req: NextRequest) {
             return auth.error;
         }
 
-        console.log("hope");
         const [products]: any = await pool.query(
             `
             SELECT
@@ -82,6 +81,24 @@ export async function POST(req: NextRequest) {
             );
         }
 
+        const parsedPrice = Number(price);
+
+        if (
+            isNaN(parsedPrice) ||
+            parsedPrice <= 0
+        ) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message:
+                        "Price must be a valid positive number",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
+
         const [result]: any = await pool.query(
             `
             INSERT INTO products (
@@ -94,7 +111,7 @@ export async function POST(req: NextRequest) {
             [
                 title,
                 description,
-                price,
+                parsedPrice,
             ]
         );
 

@@ -93,6 +93,24 @@ export async function PUT(
             price,
         } = body;
 
+        const parsedPrice = Number(price);
+
+        if (
+            isNaN(parsedPrice) ||
+            parsedPrice <= 0
+        ) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message:
+                        "Price must be a valid positive number",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
+
         await pool.query(
             `
             UPDATE products
@@ -105,7 +123,7 @@ export async function PUT(
             [
                 title,
                 description,
-                price,
+                parsedPrice,
                 id,
             ]
         );
